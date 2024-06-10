@@ -13,6 +13,7 @@ Function                S-I-U-D
 
 # Co je to Entity framework?
 * Implementace ORM
+* Ne pouze pro relační databáze
 * Dnes už se udržuje pouze EF Core
 * Rozdíl mezi EF a EF Core je zaměření na použití (desktop aplikace vs. WEB aplikace), mají rozdílné defaultní nastavení
 
@@ -21,8 +22,8 @@ Function                S-I-U-D
 ------------------------------------------------------>
 EF       4          5         6
 
-                   ---------------------------------------------------------->
-                   .NET Core             3.1       5.0      6.0     7.0     8.0     ...
+                    ------------------------------------------------------------------->
+                    .NET Core            3.1       5.0      6.0     7.0     8.0     ...
                     EF Core 1            3.1       5.0      6.0     7.0     8.0
 ```
 
@@ -130,6 +131,9 @@ EF       4          5         6
     }
 ```
 
+# HasData
+
+
 # One-to-many relationship
 * Přidáme property Genre na Movie třídu.
 * Přidáme na controller GET pro film Include metodu.
@@ -175,5 +179,46 @@ public class DateTimeToChar8Converter : ValueConverter<DateTime, string>
 }
 ```
 
-# Komplexní typy vs. vlastní typy (complex vs. owned)
+# Komplexní typy vs. vlastní typy (complex vs. owned) 
 * OwnType je považován EF za samotnou entitu, Complex type je pouze groupování vlastností do jedné, hlavní, tabulky.
+```
+    builder.OwnsOne(movie => movie.Director)
+        .ToTable("Movie_Directors");
+```
+**vs**
+```
+    builder.ComplexProperty(movie => movie.Title);
+```
+
+# Generování výchozích hodnot
+* Spousta způsobů, jak toho dosáhnout
+```
+    builder.Property(genre => genre.CreatedDate)
+        .HasDefaultValue(DateTime.Now);
+```
+```
+    builder.Property(genre => genre.CreatedDate)
+        .HasDefaultValueSql("getDate()");
+```
+```
+    builder.Property<DateTime>("CreatedDate")
+        .HasColumnName("CreatedAt")
+        .HasValueGenerator<CreatedDateGenerator>();
+```
+
+# Sykrývání vlastností před Modelem
+```
+    builder.Property<DateTIme>("CreatedDate")
+        .HasValueGenerator<CreatedDateGenerator>();
+```
+
+# QueryFilter
+* Slouží pro předfiltrování dat (např. filmy mladší jak 3 roky)
+* Ukázat, že v DB data jsou, ale controller nic nevrátí
+
+```
+    builder
+        .ToTable("Pictures")
+        .HasQueryFilter(movie => movie.ReleaseDate >= new DateTime(1990, 1, 1))
+        .HasKey(movie => movie.Identifier);
+```

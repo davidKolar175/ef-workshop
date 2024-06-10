@@ -19,7 +19,9 @@ public class MoviesController : Controller
     [ProducesResponseType(typeof(List<Movie>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAll()
     {
-        return Ok(await _context.Movies.ToListAsync());
+        throw new NotImplementedException();
+
+        //return Ok(await _context.Movies.ToListAsync());
     }
 
     [HttpGet("{id:int}")]
