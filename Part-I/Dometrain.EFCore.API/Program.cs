@@ -9,8 +9,15 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddDbContext<MoviesContext>();
 
 var app = builder.Build();
+
+// DIRTY HACK, we WILL come back to fix this
+var scope = app.Services.CreateScope();
+var context = scope.ServiceProvider.GetRequiredService<MoviesContext>();
+context.Database.EnsureDeleted();
+context.Database.EnsureCreated();
 
 
 // Configure the HTTP request pipeline.

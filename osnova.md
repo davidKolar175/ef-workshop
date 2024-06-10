@@ -53,18 +53,6 @@ EF       4          5         6
 * optionsBuilder.LogTo(Console.WriteLine);
 * Zmínit, že defaultně se nezobrazují hodnoty
 
-# Projecting data to optimize queries
-* Jedná se o způsob, jak zlepšit performance.
-* Načítáme jen sloupce, které jsou potřeba.
-* Ukázat v logu, že se nedotazujeme na vše, jako před tím.
-
-```
-    var filteredTitles = await _context.Movies
-        .Where(movie => movie.ReleaseDate.Year == year)
-        .Select(movie => new MovieTitle { Id = movie.Identifier, Title = movie.Title})
-        .ToListAsync();
-```
-
 # DBSchema a anotace dat
 * Ukázat v Azure Data Studio jak EF vytváří DB
 * Ukázat DataAnotace pro EF
@@ -135,6 +123,18 @@ EF       4          5         6
 
 # HasData
 * Způsob, jakým zadávat defaultní data.
+
+# Projecting data to optimize queries
+* Jedná se o způsob, jak zlepšit performance.
+* Načítáme jen sloupce, které jsou potřeba.
+* Ukázat v logu, že se nedotazujeme na vše, jako před tím.
+
+```
+    var filteredTitles = await _context.Movies
+        .Where(movie => movie.ReleaseDate.Year == year)
+        .Select(movie => new MovieTitle { Id = movie.Identifier, Title = movie.Title})
+        .ToListAsync();
+```
 
 # One-to-many relationship
 * Přidáme property Genre na Movie třídu.
@@ -209,8 +209,9 @@ public class DateTimeToChar8Converter : ValueConverter<DateTime, string>
 ```
 
 # Sykrývání vlastností před Modelem
+* Nechcem programátorům vždy vše z modelu zpřístupnit.
 ```
-    builder.Property<DateTIme>("CreatedDate")
+    builder.Property<DateTime>("CreatedDate")
         .HasValueGenerator<CreatedDateGenerator>();
 ```
 
