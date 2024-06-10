@@ -34,9 +34,11 @@ EF       4          5         6
 * Mapa často není potřeba, EF je chytrý a spoustu věcí si odvodí sám.
 
 # Stáhneme si EFCore SQL server package
+* Popíšeme vzník DB
 * Vytvoříme si DB Context pro filmy (MoviesContext).
 * Přidat DBContext do Service Collection.
-* Zkusit spustit a vysvětlit error.
+* **Přidat funkčnost na controller!!!**
+* Zkusit spustit a dát GET ve swaggeru a vysvětlit error.
 * Nakonfigurovat MoviesContext.
 * Zkusit spustit a vysvětlit error.
 * Nakonfigurovat SCOPE, kde deletujeme/vytváříme db tabulku.
@@ -58,12 +60,12 @@ EF       4          5         6
 
 ```
     var filteredTitles = await _context.Movies
-       .Where(movie => movie.AgeRating <= ageRating)
-       .Select(movie => new MovieTitle { Id = movie.Identifier, Title = movie.Title})
-       .ToListAsync();
+        .Where(movie => movie.ReleaseDate.Year == year)
+        .Select(movie => new MovieTitle { Id = movie.Identifier, Title = movie.Title})
+        .ToListAsync();
 ```
 
-# DBSchema
+# DBSchema a anotace dat
 * Ukázat v Azure Data Studio jak EF vytváří DB
 * Ukázat DataAnotace pro EF
 * NEZAPOMEŇ UKAZOVAT ZMĚNY!
@@ -132,7 +134,7 @@ EF       4          5         6
 ```
 
 # HasData
-
+* Způsob, jakým zadávat defaultní data.
 
 # One-to-many relationship
 * Přidáme property Genre na Movie třídu.

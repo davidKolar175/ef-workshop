@@ -61,7 +61,7 @@ public class MoviesController : Controller
     {
         var filteredTitles = await _context.Movies
             .Where(movie => movie.ReleaseDate.Year == year)
-            .Select(movie => new MovieTitle { Id = movie.Identifier, Title = movie.Title})
+            // .Select(movie => new MovieTitle { Id = movie.Identifier, Title = movie.Title})
             .ToListAsync();
 
         return Ok(filteredTitles);
