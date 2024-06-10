@@ -174,3 +174,6 @@ public class DateTimeToChar8Converter : ValueConverter<DateTime, string>
     { }
 }
 ```
+
+# Komplexní typy vs. vlastní typy (complex vs. owned)
+* OwnType je považován EF za samotnou entitu, Complex type je pouze groupování vlastností do jedné, hlavní, tabulky.

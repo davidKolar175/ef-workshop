@@ -1,4 +1,4 @@
-﻿using Dometrain.EFCore.API.Data;
+using Dometrain.EFCore.API.Data;
 using Dometrain.EFCore.API.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -21,6 +21,18 @@ public class MoviesController : Controller
     {
         return Ok(await _context.Movies.ToListAsync());
     }
+    
+    [HttpGet("until-age/{ageRating}")]
+    [ProducesResponseType(typeof(List<MovieTitle>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetAllUntilAge([FromRoute] AgeRating ageRating)
+    {
+        var filteredTitles = await _context.Movies
+            .Where(movie => movie.AgeRating <= ageRating)
+            .Select(movie => new MovieTitle { Id = movie.Identifier, Title = movie.Title})
+            .ToListAsync();
+
+        return Ok(filteredTitles);
+    }
 
     [HttpGet("{id:int}")]
     [ProducesResponseType(typeof(Movie), StatusCodes.Status200OK)]
@@ -32,7 +44,11 @@ public class MoviesController : Controller
         // Similar to FirstOrDefault, but throws if more than one match is found.
         // var movie = await _context.Movies.SingleOrDefaultAsync(m => m.Id == id);
         // Serves match from memory if already fetched, otherwise queries DB.
-        var movie = await _context.Movies.FindAsync(id); // Zkusí získat entitu z paměti, nemusí vždy kontaktovat DB
+        //var movie = await _context.Movies.FindAsync(id);
+        
+        var movie = await _context.Movies
+            .Include(movie => movie.Genre)
+            .SingleOrDefaultAsync(m => m.Identifier == id);
         
         return movie == null
             ? NotFound()
@@ -45,7 +61,7 @@ public class MoviesController : Controller
     {
         var filteredTitles = await _context.Movies
             .Where(movie => movie.ReleaseDate.Year == year)
-            .Select(movie => new MovieTitle { Id = movie.Id, Title = movie.Title})
+            .Select(movie => new MovieTitle { Id = movie.Identifier, Title = movie.Title})
             .ToListAsync();
 
         return Ok(filteredTitles);
@@ -63,7 +79,7 @@ public class MoviesController : Controller
         
         // movie has an ID
 
-        return CreatedAtAction(nameof(Get), new { id = movie.Id }, movie);
+        return CreatedAtAction(nameof(Get), new { id = movie.Identifier }, movie);
     }
     
     [HttpPut("{id:int}")]
